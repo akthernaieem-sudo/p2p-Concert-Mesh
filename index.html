@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concert Mesh Protocol</title>
+    <meta name="description" content="Decentralized P2P Hybrid Mesh Communication — Secure, Private, Emergency-Ready">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           CONCERT MESH — CYBERPUNK UI DESIGN SYSTEM
+           ═══════════════════════════════════════════════════════════════ */
+        :root {
+            --bg-void: #050507;
+            --bg-main: #070709;
+            --bg-card: rgba(18, 18, 26, 0.85);
+            --bg-card-solid: #12121a;
+            --bg-elevated: #16161f;
+            --bg-input: #1a1a25;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(0, 255, 170, 0.15);
+
+            --neon-primary: #00ffaa;
+            --neon-primary-dim: rgba(0, 255, 170, 0.08);
+            --neon-primary-glow: rgba(0, 255, 170, 0.3);
+            --neon-blue: #00b4ff;
+            --neon-blue-dim: rgba(0, 180, 255, 0.08);
+            --neon-blue-glow: rgba(0, 180, 255, 0.3);
+            --neon-purple: #a855f7;
+
+            --emergency-red: #ff1744;
+            --emergency-glow: rgba(255, 23, 68, 0.3);
+            --emergency-dim: rgba(255, 23, 68, 0.08);
+
+            --text-primary: #eaeaf0;
+            --text-secondary: #8b8ba0;
+            --text-muted: #55556a;
+            --text-inverse: #070709;
+
+            --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-void);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* ═══════════════ HEADER ═══════════════ */
+        .app-header {
+            background: linear-gradient(180deg, rgba(14, 14, 20, 0.98) 0%, rgba(10, 10, 14, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            position: relative;
+            z-index: 100;
+            min-height: 56px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-primary), 0 0 16px var(--neon-primary-glow);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 8px var(--neon-primary), 0 0 16px var(--neon-primary-glow);
+            }
+
+            50% {
+                opacity: 0.6;
+                box-shadow: 0 0 4px var(--neon-primary), 0 0 8px var(--neon-primary-glow);
+            }
+        }
+
+        .node-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+        }
+
+        .mesh-badge {
+            background: var(--neon-primary-dim);
+            padding: 4px 12px;
+            border-radius: var(--radius-lg);
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--neon-primary);
+            border: 1px solid var(--border-glow);
+            letter-spacing: 0.5px;
+            font-family: var(--font-mono);
+        }
+
+        /* ═══════════════ TAB NAVIGATION ═══════════════ */
+        .tab-bar {
+            display: flex;
+            background: rgba(10, 10, 14, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-subtle);
+            position: relative;
+            z-index: 99;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 11px 0;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-ui);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            transition: color var(--transition-fast);
+        }
+
+        .tab-btn:hover {
+            color: var(--text-secondary);
+        }
+
+        .tab-btn.active {
+            color: var(--neon-primary);
+        }
+
+        .tab-btn[data-panel="dm-panel"].active {
+            color: var(--neon-blue);
+        }
+
+        .tab-btn[data-panel="sos-panel"].active {
+            color: var(--emergency-red);
+        }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: 0;
+            height: 2px;
+            background: var(--neon-primary);
+            border-radius: 2px 2px 0 0;
+            transition: left var(--transition-smooth), width var(--transition-smooth), background var(--transition-smooth);
+            box-shadow: 0 0 10px var(--neon-primary-glow);
+        }
+
+        /* ═══════════════ PANEL VIEWPORT ═══════════════ */
+        .panel-viewport {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panel-track {
+            display: flex;
+            height: 100%;
+            transition: transform var(--transition-smooth);
+            will-change: transform;
+        }
+
+        .panel {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ═══════════════ APP LAYOUT ═══════════════ */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 100%;
+        }
+
+        /* ═══════════════════════════════════════════════
+           PANEL 1: BROADCAST (PUBLIC MESH FEED)
+           ═══════════════════════════════════════════════ */
+        .radar-container {
+            height: 160px;
+            background: linear-gradient(180deg, #0a0a10 0%, var(--bg-void) 100%);
+            border-bottom: 1px solid var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #radarCanvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .broadcast-feed {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Message Bubbles */
+        .msg-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: msg-appear 0.3s var(--transition-fast);
+            position: relative;
+        }
+
+        @keyframes msg-appear {
+            from {
+                opacity: 0;
+                transform: translateY(8px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .msg-incoming {
+            align-self: flex-start;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle);
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-outgoing {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--neon-primary) 0%, #00d4a0 50%, var(--neon-blue) 100%);
+            color: var(--text-inverse);
+            border-bottom-right-radius: 4px;
+            font-weight: 500;
+        }
+
+        .msg-sender-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--neon-primary);
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+            display: inline-block;
+        }
+
+        .msg-sender-tag:hover {
+            color: #33ffbb;
+            text-decoration: underline;
+        }
+
+        .msg-emergency {
+            align-self: center;
+            width: 92%;
+            background: linear-gradient(135deg, #ff1744 0%, #b2001a 100%);
+            color: #fff;
+            text-align: center;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            border: 1px solid rgba(255, 82, 116, 0.5);
+            box-shadow: 0 0 30px var(--emergency-glow);
+        }
+
+        .msg-system {
+            align-self: center;
+            width: 90%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 0.8rem;
+            border-radius: var(--radius-sm);
+            padding: 10px;
+        }
+
+        .msg-system-err {
+            align-self: center;
+            width: 90%;
+            background: rgba(255, 23, 68, 0.06);
+            border: 1px solid rgba(255, 23, 68, 0.2);
+            color: #ff8899;
+            text-align: center;
+            font-size: 0.82rem;
+            border-radius: var(--radius-sm);
+            padding: 10px;
+        }
+
+        .msg-timestamp {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .msg-outgoing .msg-timestamp {
+            color: rgba(7, 7, 9, 0.5);
+        }
+
+        /* Input Bar */
+        .input-bar {
+            padding: 10px 14px;
+            background: rgba(14, 14, 20, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .input-field {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            padding: 11px 16px;
+            border-radius: var(--radius-xl);
+            color: var(--text-primary);
+            font-family: var(--font-ui);
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .input-field:focus {
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 0 3px var(--neon-primary-dim);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--radius-xl);
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-broadcast {
+            background: linear-gradient(135deg, var(--neon-primary) 0%, #00d4a0 100%);
+            color: var(--text-inverse);
+            box-shadow: 0 2px 12px var(--neon-primary-glow);
+        }
+
+        .btn-broadcast:hover {
+            box-shadow: 0 4px 20px var(--neon-primary-glow);
+            transform: translateY(-1px);
+        }
+
+        /* ═══════════════════════════════════════════════
+           PANEL 2: PRIVATE DMs
+           ═══════════════════════════════════════════════ */
+        .dm-panel-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Contacts List View */
+        .dm-contacts-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .dm-section-title {
+            padding: 16px 18px 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .dm-empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            padding: 40px;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .dm-empty-icon {
+            font-size: 3rem;
+            opacity: 0.3;
+        }
+
+        .dm-empty-text {
+            font-size: 0.85rem;
+            max-width: 260px;
+            line-height: 1.5;
+        }
+
+        .contact-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 10px;
+        }
+
+        .contact-cell {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            margin: 2px 0;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            gap: 12px;
+        }
+
+        .contact-cell:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .contact-cell:active {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .contact-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contact-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .contact-preview {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 2px;
+        }
+
+        .contact-unread {
+            background: var(--neon-blue);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Chat Room View */
+        .dm-chat-view {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .dm-chat-view.active {
+            display: flex;
+        }
+
+        .dm-contacts-view.hidden {
+            display: none;
+        }
+
+        .dm-chat-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            gap: 12px;
+            background: rgba(14, 14, 20, 0.95);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .dm-back-btn {
+            background: none;
+            border: none;
+            color: var(--neon-blue);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            transition: background var(--transition-fast);
+        }
+
+        .dm-back-btn:hover {
+            background: rgba(0, 180, 255, 0.08);
+        }
+
+        .dm-chat-peer-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dm-chat-peer-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .dm-chat-peer-status {
+            font-size: 0.68rem;
+            color: var(--neon-primary);
+            font-family: var(--font-mono);
+        }
+
+        .dm-options-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            transition: color var(--transition-fast);
+            position: relative;
+            line-height: 1;
+        }
+
+        .dm-options-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* Options dropdown */
+        .dm-options-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            z-index: 200;
+            min-width: 170px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            animation: dropdown-appear 0.2s ease;
+        }
+
+        .dm-options-dropdown.show {
+            display: block;
+        }
+
+        @keyframes dropdown-appear {
+            from {
+                opacity: 0;
+                transform: translateY(-4px) scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .dm-options-dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 11px 16px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            text-align: left;
+        }
+
+        .dm-options-dropdown button:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .dm-options-dropdown button.danger {
+            color: var(--emergency-red);
+        }
+
+        .dm-options-dropdown button.danger:hover {
+            background: var(--emergency-dim);
+        }
+
+        /* DM message feed */
+        .dm-feed {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dm-msg {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: msg-appear 0.3s ease;
+        }
+
+        .dm-msg-in {
+            align-self: flex-start;
+            background: rgba(0, 180, 255, 0.08);
+            border: 1px solid rgba(0, 180, 255, 0.15);
+            border-bottom-left-radius: 4px;
+        }
+
+        .dm-msg-out {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--neon-blue) 0%, #0066ff 100%);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+            font-weight: 500;
+        }
+
+        .dm-lock-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.62rem;
+            color: var(--neon-primary);
+            font-family: var(--font-mono);
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        .dm-msg-out .dm-lock-badge {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* DM Input */
+        .dm-input-bar {
+            padding: 10px 14px;
+            background: rgba(14, 14, 20, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .dm-input-field {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            padding: 11px 16px;
+            border-radius: var(--radius-xl);
+            color: var(--text-primary);
+            font-family: var(--font-ui);
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .dm-input-field:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 3px var(--neon-blue-dim);
+        }
+
+        .dm-input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-dm-send {
+            background: linear-gradient(135deg, var(--neon-blue) 0%, #0066ff 100%);
+            color: #fff;
+            box-shadow: 0 2px 12px var(--neon-blue-glow);
+        }
+
+        .btn-dm-send:hover {
+            box-shadow: 0 4px 20px var(--neon-blue-glow);
+            transform: translateY(-1px);
+        }
+
+        /* ═══════════════════════════════════════════════
+           PANEL 3: SOS EMERGENCY
+           ═══════════════════════════════════════════════ */
+        .sos-panel-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            gap: 30px;
+            overflow-y: auto;
+            background: radial-gradient(ellipse at center, rgba(255, 23, 68, 0.03) 0%, var(--bg-void) 70%);
+        }
+
+        .sos-main-btn {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff3355 0%, #cc0022 60%, #880015 100%);
+            border: 4px solid rgba(255, 82, 116, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 4px;
+            color: #fff;
+            font-family: var(--font-ui);
+            font-weight: 900;
+            font-size: 2.2rem;
+            letter-spacing: 6px;
+            box-shadow:
+                0 0 40px var(--emergency-glow),
+                0 0 80px rgba(255, 23, 68, 0.15),
+                inset 0 -4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            animation: sos-pulse 2.5s ease-in-out infinite;
+            position: relative;
+        }
+
+        .sos-main-btn::before {
+            content: '';
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 23, 68, 0.2);
+            animation: sos-ring-pulse 2.5s ease-in-out infinite;
+        }
+
+        .sos-main-btn::after {
+            content: '';
+            position: absolute;
+            inset: -24px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 23, 68, 0.1);
+            animation: sos-ring-pulse 2.5s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes sos-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 40px var(--emergency-glow), 0 0 80px rgba(255, 23, 68, 0.15);
+                transform: scale(1);
+            }
+
+            50% {
+                box-shadow: 0 0 60px var(--emergency-glow), 0 0 120px rgba(255, 23, 68, 0.25);
+                transform: scale(1.03);
+            }
+        }
+
+        @keyframes sos-ring-pulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
+        .sos-main-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 80px var(--emergency-glow), 0 0 160px rgba(255, 23, 68, 0.3);
+        }
+
+        .sos-main-btn:active {
+            transform: scale(0.95);
+            animation: none;
+        }
+
+        .sos-subtitle {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+        }
+
+        .sos-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 260px;
+            line-height: 1.5;
+        }
+
+        /* Emergency Dialer */
+        .dialer-section {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .dialer-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .dialer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .dialer-btn {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 14px 12px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .dialer-btn:hover {
+            border-color: var(--emergency-red);
+            background: var(--emergency-dim);
+            transform: translateY(-1px);
+        }
+
+        .dialer-btn:active {
+            transform: scale(0.97);
+        }
+
+        .dialer-code {
+            font-family: var(--font-mono);
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--emergency-red);
+        }
+
+        .dialer-desc {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .dialer-icon {
+            font-size: 1rem;
+        }
+
+        /* ═══════════════ CONNECTION STATUS ═══════════════ */
+        .connection-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 7, 0.95);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .connection-overlay.show {
+            display: flex;
+        }
+
+        .conn-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-subtle);
+            border-top-color: var(--neon-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .conn-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .conn-error-text {
+            color: var(--emergency-red);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Connection Overlay -->
+    <div class="connection-overlay show" id="connectionOverlay">
+        <div class="conn-spinner"></div>
+        <div class="conn-text">Initializing Mesh Engine…</div>
+        <div class="conn-error-text" id="connError" style="display:none"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="status-indicator" id="statusDot"></div>
+                <h1 class="node-name" id="nodeName">SYNCING…</h1>
+            </div>
+            <div class="mesh-badge" id="meshBadge">MESH v2.0</div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-bar" id="tabBar">
+            <button class="tab-btn active" data-panel="broadcast-panel" id="tab-broadcast" onclick="switchPanel(0)">
+                ◈ Broadcast
+            </button>
+            <button class="tab-btn" data-panel="dm-panel" id="tab-dm" onclick="switchPanel(1)">
+                ◆ Private DMs
+            </button>
+            <button class="tab-btn" data-panel="sos-panel" id="tab-sos" onclick="switchPanel(2)">
+                ⚠ SOS
+            </button>
+            <div class="tab-indicator" id="tabIndicator"></div>
+        </nav>
+
+        <!-- Panel Viewport -->
+        <div class="panel-viewport">
+            <div class="panel-track" id="panelTrack">
+
+                <!-- ═══ PANEL 1: BROADCAST ═══ -->
+                <div class="panel" id="broadcast-panel">
+                    <div class="radar-container">
+                        <canvas id="radarCanvas"></canvas>
+                    </div>
+                    <div class="broadcast-feed" id="broadcastFeed">
+                        <div class="msg-bubble msg-system">
+                            <div style="font-size:0.75rem; opacity:0.6; margin-bottom:4px;">⚡ SYSTEM</div>
+                            Mesh engine online. Broadcast a message to share your public key with peers.
+                        </div>
+                    </div>
+                    <div class="input-bar">
+                        <input class="input-field" type="text" id="broadcastInput"
+                            placeholder="Type a broadcast message…" onkeydown="if(event.key==='Enter')sendBroadcast()">
+                        <button class="btn btn-broadcast" onclick="sendBroadcast()" id="btnBroadcast">Broadcast</button>
+                    </div>
+                </div>
+
+                <!-- ═══ PANEL 2: PRIVATE DMs ═══ -->
+                <div class="panel" id="dm-panel">
+                    <div class="dm-panel-content">
+                        <!-- Contacts List -->
+                        <div class="dm-contacts-view" id="dmContactsView">
+                            <div class="dm-section-title">Active Peers</div>
+                            <div class="contact-list" id="contactList">
+                                <div class="dm-empty-state" id="dmEmptyState">
+                                    <div class="dm-empty-icon">🔐</div>
+                                    <div class="dm-empty-text">No peers discovered yet. Send a broadcast to share your
+                                        public key and discover peers on the mesh.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Chat Room -->
+                        <div class="dm-chat-view" id="dmChatView">
+                            <div class="dm-chat-header">
+                                <button class="dm-back-btn" id="dmBackBtn">←</button>
+                                <div class="dm-chat-peer-info">
+                                    <div class="dm-chat-peer-name" id="dmChatPeerName">—</div>
+                                    <div class="dm-chat-peer-status">🔒 E2E Encrypted</div>
+                                </div>
+                                <div style="position:relative">
+                                    <button class="dm-options-btn" id="dmOptionsBtn">⋮</button>
+                                    <div class="dm-options-dropdown" id="dmOptionsDropdown">
+                                        <button class="danger" id="blockPeerBtn">🚫 Block Peer</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dm-feed" id="dmFeed"></div>
+                            <div class="dm-input-bar">
+                                <input class="dm-input-field" type="text" id="dmInput"
+                                    placeholder="Type a private message…" onkeydown="if(event.key==='Enter')sendDm()">
+                                <button class="btn btn-dm-send" onclick="sendDm()" id="btnDmSend">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ PANEL 3: SOS EMERGENCY ═══ -->
+                <div class="panel" id="sos-panel">
+                    <div class="sos-panel-content">
+                        <button class="sos-main-btn" onclick="triggerSOS()" id="sosMainBtn">
+                            SOS
+                            <div class="sos-subtitle">EMERGENCY</div>
+                        </button>
+                        <div class="sos-label">
+                            Tap to broadcast an emergency distress signal to all connected mesh peers.
+                            This overrides block lists and fires a native system alert.
+                        </div>
+
+                        <div class="dialer-section">
+                            <div class="dialer-title">Emergency Service Lines</div>
+                            <div class="dialer-grid">
+                                <div class="dialer-btn" id="dial-police">
+                                    <div class="dialer-icon">🚔</div>
+                                    <div class="dialer-code">100</div>
+                                    <div class="dialer-desc">Police Control</div>
+                                </div>
+                                <div class="dialer-btn" id="dial-medical">
+                                    <div class="dialer-icon">🚑</div>
+                                    <div class="dialer-code">108</div>
+                                    <div class="dialer-desc">Medical Rescue</div>
+                                </div>
+                                <div class="dialer-btn" id="dial-fire">
+                                    <div class="dialer-icon">🚒</div>
+                                    <div class="dialer-code">101</div>
+                                    <div class="dialer-desc">Fire Dispatch</div>
+                                </div>
+                                <div class="dialer-btn" id="dial-universal">
+                                    <div class="dialer-icon">📞</div>
+                                    <div class="dialer-code">112</div>
+                                    <div class="dialer-desc">Universal SOS</div>
+                                </div>
+                                <div class="dialer-btn" id="dial-women">
+                                    <div class="dialer-icon">🛡️</div>
+                                    <div class="dialer-code">1091</div>
+                                    <div class="dialer-desc">Women Helpline</div>
+                                </div>
+                                <div class="dialer-btn" id="dial-child">
+                                    <div class="dialer-icon">🧒</div>
+                                    <div class="dialer-code">1098</div>
+                                    <div class="dialer-desc">Child Helpline</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /panel-track -->
+        </div><!-- /panel-viewport -->
+    </div><!-- /app-container -->
+
+    <script>
+        /* ═══════════════════════════════════════════════════════════════════
+           CONCERT MESH — FRONTEND APPLICATION ENGINE
+           ═══════════════════════════════════════════════════════════════════ */
+
+        // ── STATE ──
+        let ws = null;
+        let currentNodeName = '';
+        let activeDmPeer = null;
+        let currentPanel = 0;
+        let discoveredPeers = {};
+        let knownPeerNames = [];
+        let dmConversations = {};     // { peerName: [ { sender, payload, timestamp, isMe } ] }
+        let unreadCounts = {};        // { peerName: number }
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        // ── WEBSOCKET CONNECTION ──
+        const WS_URL = 'ws://127.0.0.1:18001';
+
+        function connectWebSocket() {
+            ws = new WebSocket(WS_URL);
+
+            ws.onopen = () => {
+                document.getElementById('connectionOverlay').classList.remove('show');
+                document.getElementById('statusDot').style.background = 'var(--neon-primary)';
+            };
+
+            ws.onclose = () => {
+                document.getElementById('statusDot').style.background = '#ff1744';
+                document.getElementById('statusDot').style.boxShadow = '0 0 8px #ff1744';
+                // Retry connection after 2s
+                setTimeout(connectWebSocket, 2000);
+            };
+
+            ws.onerror = () => {
+                const errEl = document.getElementById('connError');
+                errEl.style.display = 'block';
+                errEl.textContent = 'Connection failed — retrying…';
+            };
+
+            ws.onmessage = handleIncomingMessage;
+        }
+
+        // ── MESSAGE HANDLER ──
+        function handleIncomingMessage(event) {
+            const packet = JSON.parse(event.data);
+
+            // Update peer map for radar
+            if (packet.peers_map) {
+                discoveredPeers = packet.peers_map;
+            }
+
+            // Update known peers list
+            if (packet.known_peers) {
+                packet.known_peers.forEach(name => {
+                    if (!knownPeerNames.includes(name) && name !== currentNodeName) {
+                        knownPeerNames.push(name);
+                    }
+                });
+                renderContactList();
+            }
+
+            // ── INIT (identity set) ──
+            if (packet.type === 'INIT' || packet.type === 'SET_NAME') {
+                currentNodeName = packet.payload;
+                document.getElementById('nodeName').textContent = currentNodeName;
+                document.getElementById('meshBadge').textContent = 'MESH · LIVE';
+                return;
+            }
+
+            // ── SYSTEM MESSAGE ──
+            if (packet.type === 'SYSTEM_MSG') {
+                appendBroadcastMessage(packet, 'system');
+                return;
+            }
+
+            // ── SYSTEM ERROR ──
+            if (packet.type === 'SYSTEM_ERR') {
+                appendBroadcastMessage(packet, 'error');
+                return;
+            }
+
+            // ── PEER LIST ──
+            if (packet.type === 'PEER_LIST') {
+                return;
+            }
+
+            // ── EMERGENCY ──
+            if (packet.type === 'EMERGENCY') {
+                appendBroadcastMessage(packet, 'emergency');
+                return;
+            }
+
+            // ── DM (Private Message) ──
+            if (packet.type === 'DM') {
+                // Only process if addressed to us or sent by us
+                if (!packet.is_me && packet.target !== currentNodeName) return;
+
+                const peerName = packet.is_me ? packet.target : packet.sender;
+
+                // Initialize conversation if needed
+                if (!dmConversations[peerName]) dmConversations[peerName] = [];
+
+                const msgObj = {
+                    sender: packet.sender,
+                    payload: packet.payload,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    isMe: packet.is_me
+                };
+
+                dmConversations[peerName].push(msgObj);
+
+                // Increment unread if not viewing this chat
+                if (activeDmPeer !== peerName) {
+                    unreadCounts[peerName] = (unreadCounts[peerName] || 0) + 1;
+                }
+
+                // Ensure peer is in known list
+                if (!knownPeerNames.includes(peerName)) {
+                    knownPeerNames.push(peerName);
+                }
+
+                renderContactList();
+
+                // If currently viewing this peer's chat, render it
+                if (activeDmPeer === peerName) {
+                    renderDmChat();
+                }
+                return;
+            }
+
+            // ── BROADCAST (CHAT) ──
+            if (packet.type === 'CHAT') {
+                appendBroadcastMessage(packet, 'chat');
+
+                // Register sender as known peer
+                if (packet.sender && packet.sender !== currentNodeName && !knownPeerNames.includes(packet.sender)) {
+                    knownPeerNames.push(packet.sender);
+                    renderContactList();
+                }
+            }
+        }
+
+        // ── BROADCAST FEED ──
+        function appendBroadcastMessage(packet, category) {
+            const feed = document.getElementById('broadcastFeed');
+            const bubble = document.createElement('div');
+            const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (category === 'emergency') {
+                bubble.className = 'msg-bubble msg-emergency';
+                bubble.innerHTML = `
+                <div style="font-size:1.4rem; margin-bottom:6px;">🚨</div>
+                <div style="font-size:0.9rem; font-weight:800; margin-bottom:4px;">EMERGENCY OVERRIDE</div>
+                <div style="font-size:0.82rem; opacity:0.9;">Node <strong>[${packet.sender}]</strong> initiated distress signal</div>
+                <div style="font-size:0.78rem; margin-top:6px; opacity:0.7;">${packet.payload}</div>
+            `;
+            } else if (category === 'system') {
+                bubble.className = 'msg-bubble msg-system';
+                bubble.innerHTML = `<div style="font-size:0.75rem; opacity:0.6; margin-bottom:4px;">⚡ SYSTEM</div>${escapeHtml(packet.payload)}`;
+            } else if (category === 'error') {
+                bubble.className = 'msg-bubble msg-system-err';
+                bubble.textContent = packet.payload;
+            } else if (category === 'chat') {
+                if (packet.is_me) {
+                    bubble.className = 'msg-bubble msg-outgoing';
+                    bubble.innerHTML = `
+                    <div>${formatPayload(packet.payload)}</div>
+                    <div class="msg-timestamp">${now}</div>
+                `;
+                } else {
+                    bubble.className = 'msg-bubble msg-incoming';
+                    bubble.innerHTML = `
+                    <div class="msg-sender-tag" onclick="openDmFromBroadcast('${escapeHtml(packet.sender)}')">${escapeHtml(packet.sender)}</div>
+                    <div>${formatPayload(packet.payload)}</div>
+                    <div class="msg-timestamp">${now}</div>
+                `;
+                }
+            }
+
+            feed.appendChild(bubble);
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        // ── SEND BROADCAST ──
+        function sendBroadcast() {
+            const input = document.getElementById('broadcastInput');
+            const text = input.value.trim();
+            if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+            ws.send(JSON.stringify({ type: 'CHAT', payload: text, target: '' }));
+            input.value = '';
+            input.focus();
+        }
+
+        // ── DM CONTACTS ──
+        function renderContactList() {
+            const list = document.getElementById('contactList');
+            const empty = document.getElementById('dmEmptyState');
+
+            // Clear existing contacts (but keep empty state)
+            list.querySelectorAll('.contact-cell').forEach(el => el.remove());
+
+            const peersToRender = knownPeerNames.filter(peer => peer !== currentNodeName);
+
+            if (peersToRender.length === 0) {
+                if (!empty.parentElement) list.appendChild(empty);
+                empty.style.display = 'flex';
+                return;
+            }
+
+            empty.style.display = 'none';
+
+            peersToRender.forEach(peer => {
+                const cell = document.createElement('div');
+                cell.className = 'contact-cell';
+                cell.onclick = () => openDmChat(peer);
+
+                const initial = peer.charAt(0).toUpperCase();
+                const convo = dmConversations[peer] || [];
+                const lastMsg = convo.length > 0 ? convo[convo.length - 1].payload : 'Tap to start encrypted chat';
+                const unread = unreadCounts[peer] || 0;
+
+                cell.innerHTML = `
+                <div class="contact-avatar">${initial}</div>
+                <div class="contact-info">
+                    <div class="contact-name">${escapeHtml(peer)}</div>
+                    <div class="contact-preview">${escapeHtml(lastMsg.substring(0, 50))}</div>
+                </div>
+                ${unread > 0 ? `<div class="contact-unread">${unread}</div>` : ''}
+            `;
+
+                list.appendChild(cell);
+            });
+        }
+
+        // ── OPEN DM CHAT ──
+        function openDmChat(peerName) {
+            activeDmPeer = peerName;
+            unreadCounts[peerName] = 0;
+
+            document.getElementById('dmContactsView').classList.add('hidden');
+            document.getElementById('dmChatView').classList.add('active');
+            document.getElementById('dmChatPeerName').textContent = peerName;
+
+            renderDmChat();
+            renderContactList();
+
+            // Focus the input
+            setTimeout(() => document.getElementById('dmInput').focus(), 100);
+        }
+
+        // ── OPEN DM FROM BROADCAST (click on sender name) ──
+        function openDmFromBroadcast(senderName) {
+            if (!knownPeerNames.includes(senderName)) {
+                knownPeerNames.push(senderName);
+                renderContactList();
+            }
+            switchPanel(1);
+            setTimeout(() => openDmChat(senderName), 100);
+        }
+
+        // ── CLOSE DM CHAT (back to contacts) ──
+        function closeDmChat() {
+            activeDmPeer = null;
+            document.getElementById('dmChatView').classList.remove('active');
+            document.getElementById('dmContactsView').classList.remove('hidden');
+            renderContactList();
+        }
+
+        // ── RENDER DM MESSAGES ──
+        function renderDmChat() {
+            const feed = document.getElementById('dmFeed');
+            feed.innerHTML = '';
+
+            const convo = dmConversations[activeDmPeer] || [];
+
+            if (convo.length === 0) {
+                feed.innerHTML = `
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--text-muted);text-align:center;gap:10px;padding:40px;">
+                    <div style="font-size:2.5rem;opacity:0.3;">🔐</div>
+                    <div style="font-size:0.85rem;">Messages with <strong style="color:var(--neon-blue);">${escapeHtml(activeDmPeer)}</strong> are end-to-end encrypted using RSA-2048.</div>
+                </div>
+            `;
+                return;
+            }
+
+            convo.forEach(msg => {
+                const el = document.createElement('div');
+                el.className = `dm-msg ${msg.isMe ? 'dm-msg-out' : 'dm-msg-in'}`;
+                el.innerHTML = `
+                <div>${formatPayload(msg.payload)}</div>
+                <div class="dm-lock-badge">🔒 E2E · RSA-2048 · ${msg.timestamp}</div>
+            `;
+                feed.appendChild(el);
+            });
+
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        // ── SEND DM ──
+        function sendDm() {
+            if (!activeDmPeer) return;
+            const input = document.getElementById('dmInput');
+            const text = input.value.trim();
+            if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+            ws.send(JSON.stringify({
+                type: 'DM',
+                payload: text,
+                target: activeDmPeer
+            }));
+
+            input.value = '';
+            input.focus();
+        }
+
+        // ── DM OPTIONS DROPDOWN ──
+        function toggleDmOptions(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('dmOptionsDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            document.getElementById('dmOptionsDropdown').classList.remove('show');
+        });
+
+        // ── BLOCK PEER ──
+        function blockCurrentPeer() {
+            if (!activeDmPeer || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+            const confirmBlock = confirm(`Block "${activeDmPeer}"?\n\nAll messages from this peer will be silently dropped (except emergency alerts).`);
+            if (!confirmBlock) return;
+
+            ws.send(JSON.stringify({ type: 'BLOCK', payload: activeDmPeer }));
+            document.getElementById('dmOptionsDropdown').classList.remove('show');
+            closeDmChat();
+        }
+
+        // ── SOS EMERGENCY ──
+        function triggerSOS() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+            const confirmSOS = confirm('⚠️ ACTIVATE EMERGENCY SOS?\n\nThis will broadcast a distress signal to ALL connected mesh peers and trigger native system alerts.');
+            if (!confirmSOS) return;
+
+            ws.send(JSON.stringify({
+                type: 'EMERGENCY',
+                payload: 'EMERGENCY DISTRESS — Immediate assistance required at this mesh node location.',
+                target: ''
+            }));
+
+            // Visual feedback — flash the button
+            const btn = document.getElementById('sosMainBtn');
+            btn.style.animation = 'none';
+            btn.style.transform = 'scale(0.9)';
+            btn.style.boxShadow = '0 0 120px var(--emergency-glow), 0 0 200px rgba(255, 23, 68, 0.5)';
+            setTimeout(() => {
+                btn.style.transform = '';
+                btn.style.boxShadow = '';
+                btn.style.animation = '';
+            }, 500);
+        }
+
+        // ── EMERGENCY DIALER ──
+        function dialEmergency(code, serviceName) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+            ws.send(JSON.stringify({
+                type: 'EMERGENCY',
+                payload: `📞 Attempting to reach ${serviceName} at ${code} — requesting mesh relay assistance.`,
+                target: ''
+            }));
+
+            // Visual feedback
+            alert(`📞 Emergency Dial: ${code}\n\nService: ${serviceName}\n\nA mesh-wide emergency signal has been dispatched.`);
+        }
+
+        // ═══════════════ PANEL SWITCHING ═══════════════
+        function switchPanel(index) {
+            currentPanel = index;
+            const track = document.getElementById('panelTrack');
+            track.style.transform = `translateX(-${index * 100}%)`;
+
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+
+            // Update indicator
+            updateTabIndicator(index);
+        }
+
+        function updateTabIndicator(index) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const indicator = document.getElementById('tabIndicator');
+            const tab = tabs[index];
+
+            if (tab) {
+                indicator.style.left = tab.offsetLeft + 'px';
+                indicator.style.width = tab.offsetWidth + 'px';
+
+                // Change indicator color based on panel
+                if (index === 0) {
+                    indicator.style.background = 'var(--neon-primary)';
+                    indicator.style.boxShadow = '0 0 10px var(--neon-primary-glow)';
+                } else if (index === 1) {
+                    indicator.style.background = 'var(--neon-blue)';
+                    indicator.style.boxShadow = '0 0 10px var(--neon-blue-glow)';
+                } else {
+                    indicator.style.background = 'var(--emergency-red)';
+                    indicator.style.boxShadow = '0 0 10px var(--emergency-glow)';
+                }
+            }
+        }
+
+        // ── TOUCH/SWIPE SUPPORT ──
+        const viewport = document.querySelector('.panel-viewport');
+
+        viewport.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const diff = touchStartX - touchEndX;
+            const threshold = 60;
+
+            if (Math.abs(diff) < threshold) return;
+
+            if (diff > 0 && currentPanel < 2) {
+                switchPanel(currentPanel + 1);
+            } else if (diff < 0 && currentPanel > 0) {
+                switchPanel(currentPanel - 1);
+            }
+        }
+
+        // ═══════════════ RADAR CANVAS ═══════════════
+        const canvas = document.getElementById('radarCanvas');
+        const ctx = canvas.getContext('2d');
+        let sweepAngle = 0;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth * (window.devicePixelRatio || 1);
+            canvas.height = canvas.parentElement.clientHeight * (window.devicePixelRatio || 1);
+            canvas.style.width = canvas.parentElement.clientWidth + 'px';
+            canvas.style.height = canvas.parentElement.clientHeight + 'px';
+            ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            // Re-init tab indicator after resize
+            updateTabIndicator(currentPanel);
+        });
+
+        function drawRadar() {
+            const w = canvas.parentElement.clientWidth;
+            const h = canvas.parentElement.clientHeight;
+            ctx.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const maxR = Math.min(cx, cy) - 14;
+
+            // Grid rings
+            ctx.strokeStyle = 'rgba(0, 255, 170, 0.1)';
+            ctx.lineWidth = 0.8;
+            for (let i = 1; i <= 3; i++) {
+                const r = (maxR / 3) * i;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Crosshairs
+            ctx.beginPath();
+            ctx.moveTo(cx - maxR, cy);
+            ctx.lineTo(cx + maxR, cy);
+            ctx.moveTo(cx, cy - maxR);
+            ctx.lineTo(cx, cy + maxR);
+            ctx.stroke();
+
+            // Sweep cone
+            sweepAngle = (sweepAngle + 0.02) % (Math.PI * 2);
+            const sweepGrad = ctx.createConicalGradient
+                ? null
+                : ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+
+            ctx.fillStyle = 'rgba(0, 255, 170, 0.06)';
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, maxR, sweepAngle - 0.5, sweepAngle);
+            ctx.closePath();
+            ctx.fill();
+
+            // Sweep line
+            ctx.strokeStyle = 'rgba(0, 255, 170, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + maxR * Math.cos(sweepAngle), cy + maxR * Math.sin(sweepAngle));
+            ctx.stroke();
+
+            // Center dot
+            ctx.fillStyle = 'var(--neon-primary)';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#00ffaa';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Peer blips
+            for (const peer in discoveredPeers) {
+                const data = discoveredPeers[peer];
+                const rad = (data.angle * Math.PI) / 180;
+                const px = cx + (data.distance / 150) * maxR * Math.cos(rad);
+                const py = cy + (data.distance / 150) * maxR * Math.sin(rad);
+
+                // Glow effect
+                ctx.fillStyle = '#00ffaa';
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = '#00ffaa';
+                ctx.beginPath();
+                ctx.arc(px, py, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Label
+                ctx.fillStyle = '#8b8ba0';
+                ctx.font = '10px Inter, sans-serif';
+                ctx.fillText(peer, px + 8, py + 3);
+            }
+
+            requestAnimationFrame(drawRadar);
+        }
+
+        // ═══════════════ UTILITIES ═══════════════
+        function formatPayload(payload) {
+            if (!payload) return '';
+            
+            const hasBrackets = /\{\{[\s\S]*?\}\}/.test(payload);
+            const isEncryptedPlaceholder = payload.includes('[Encrypted Content]') || payload.startsWith('[Encrypted');
+            
+            if (hasBrackets || isEncryptedPlaceholder) {
+                const isAwaiting = isEncryptedPlaceholder || /key|handshake|await|auth/i.test(payload);
+                const statusText = isAwaiting ? "Awaiting Keys..." : "Transmission Secure";
+                const styleColor = isAwaiting ? "var(--text-secondary)" : "var(--neon-primary)";
+                
+                return `<span class="encryption-fallback" style="font-style: italic; color: ${styleColor}; display: inline-flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 0.95rem;">🔒</span> ${statusText}
+                </span>`;
+            }
+            return escapeHtml(payload);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getTimestamp() {
+            return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // ═══════════════ INIT ═══════════════
+        // Bind dynamic event listeners
+        const dmBackBtn = document.getElementById('dmBackBtn');
+        if (dmBackBtn) {
+            dmBackBtn.addEventListener('click', closeDmChat);
+        }
+
+        const dmOptionsBtn = document.getElementById('dmOptionsBtn');
+        if (dmOptionsBtn) {
+            dmOptionsBtn.addEventListener('click', toggleDmOptions);
+        }
+
+        const blockPeerBtn = document.getElementById('blockPeerBtn');
+        if (blockPeerBtn) {
+            blockPeerBtn.addEventListener('click', blockCurrentPeer);
+        }
+
+        document.querySelectorAll('.dialer-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const code = this.querySelector('.dialer-code').textContent.trim();
+                const desc = this.querySelector('.dialer-desc').textContent.trim();
+                dialEmergency(code, desc);
+            });
+        });
+
+        resizeCanvas();
+        requestAnimationFrame(drawRadar);
+        updateTabIndicator(0);
+        connectWebSocket();
+
+    </script>
+</body>
+
+</html>
